@@ -1,33 +1,7 @@
-from rest_framework import viewsets
+from rest_framework.routers import DefaultRouter
+from .views import EmployeeView
 
-from .models import Employee, DeletedEmployee
+router = DefaultRouter()
+router.register(r'employees', EmployeeView)
 
-from .serializers import (
-    EmployeeSerializer,
-    DeletedEmployeeSerializer
-)
-
-
-class EmployeeView(viewsets.ModelViewSet):
-
-    queryset = Employee.objects.all()
-
-    serializer_class = EmployeeSerializer
-
-    def perform_destroy(self, instance):
-
-        DeletedEmployee.objects.create(
-            name=instance.name,
-            email=instance.email,
-            designation=instance.designation,
-            salary=instance.salary
-        )
-
-        instance.delete()
-
-
-class DeletedEmployeeView(viewsets.ModelViewSet):
-
-    queryset = DeletedEmployee.objects.all()
-
-    serializer_class = DeletedEmployeeSerializer
+urlpatterns = router.urls
