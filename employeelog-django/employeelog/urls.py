@@ -1,7 +1,10 @@
-from rest_framework.routers import DefaultRouter
-from .views import EmployeeViewSet
+from django.contrib import admin
+from django.urls import path, include
 
-router = DefaultRouter()
-router.register(r'employees', EmployeeViewSet)
+urlpatterns = [
 
-urlpatterns = router.urls
+    path('admin/', admin.site.urls),
+
+    path('api/', include('employees.urls')),
+
+]

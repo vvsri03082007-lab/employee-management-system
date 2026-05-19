@@ -20,6 +20,7 @@
           <th>Email</th>
           <th>Designation</th>
           <th>Salary</th>
+          <th>Phone</th>
           <th>Actions</th>
         </tr>
 
@@ -96,6 +97,21 @@
 
           <td v-else>
             ₹{{ employee.salary }}
+          </td>
+
+          <!-- PHONE -->
+
+          <td v-if="editing === employee.id">
+
+            <input
+              type="number"
+              v-model="employee.phone"
+            />
+
+          </td>
+
+          <td v-else>
+            {{ employee.phone }}
           </td>
 
           <!-- ACTIONS -->
@@ -182,7 +198,8 @@ export default {
         employee.name === '' ||
         employee.email === '' ||
         employee.designation === '' ||
-        employee.salary === ''
+        employee.salary === '' ||
+        employee.phone === ''
       ) {
 
         alert("Please fill all fields")

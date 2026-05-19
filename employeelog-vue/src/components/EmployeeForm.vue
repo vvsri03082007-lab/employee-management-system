@@ -30,6 +30,12 @@
         placeholder="Enter Salary"
       />
 
+      <input
+        type="number"
+        v-model="employee.phone"
+        placeholder="Enter Phone Number"
+      />
+
       <button>Add Employee</button>
 
     </form>
@@ -52,7 +58,8 @@ export default {
         name: '',
         email: '',
         designation: '',
-        salary: ''
+        salary: '',
+        phone: ''
 
       }
 
@@ -68,7 +75,8 @@ export default {
         this.employee.name === '' ||
         this.employee.email === '' ||
         this.employee.designation === '' ||
-        this.employee.salary === ''
+        this.employee.salary === '' ||
+        this.employee.phone === ''
       ) {
 
         alert("Please fill all fields")
@@ -86,7 +94,8 @@ export default {
         name: '',
         email: '',
         designation: '',
-        salary: ''
+        salary: '',
+        phone: ''
 
       }
 
