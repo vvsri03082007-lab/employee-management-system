@@ -1,45 +1,101 @@
-## Database Structure
+# Employee Management System
 
-The project uses two separate database tables to manage employee records efficiently.
+A full stack Employee Management System built using Vue.js, Django REST Framework, and MySQL.
 
-### Current Employees Table
-This table stores all active employees currently working in the organization.
+---
 
-Fields:
-- Employee ID
-- Name
-- Email
-- Designation
-- Salary
+# Features
 
-Operations supported:
-- Add employee
-- Edit employee
-- Delete employee
+- Add Employees
+- Edit Employee Details
+- Delete Employees
+- Store Deleted Employees History
+- Employee Phone Number Support
+- REST API Integration
+- Responsive UI
+- Full CRUD Operations
 
-### Deleted Employees Table
-Whenever an employee is deleted from the system, the employee details are not permanently removed.
+---
 
-Instead, the deleted employee data is transferred and stored in a separate Deleted Employees table for record maintenance and tracking purposes.
+# Tech Stack
 
-Fields stored:
-- Employee ID
-- Name
-- Email
-- Designation
-- Salary
-- Deleted Time (optional)
+## Frontend
+- Vue.js
+- Axios
+- CSS
 
-This approach helps maintain:
-- Employee history
-- Data safety
-- Record tracking
-- Audit management
+## Backend
+- Django
+- Django REST Framework
 
-## Workflow
+## Database
+- MySQL
 
-1. Employee is added using the Vue.js frontend.
-2. Data is stored in MySQL through Django REST API.
-3. Active employee records remain in the Current Employees table.
-4. Deleted employee records move automatically to the Deleted Employees table.
-5. Vue.js frontend updates dynamically after every CRUD operation.
+---
+
+# Project Structure
+
+employee-management-system/
+│
+├── employeelog-django/
+│   ├── employees/
+│   ├── employeelog/
+│   └── manage.py
+│
+├── employeelog-vue/
+│   ├── src/
+│   └── public/
+│
+└── README.md
+
+---
+
+# API Endpoints
+
+## Current Employees
+
+GET
+/api/employees/
+
+POST
+/api/employees/
+
+PUT
+/api/employees/id/
+
+DELETE
+/api/employees/id/
+
+---
+
+## Deleted Employees
+
+GET
+/api/deleted-employees/
+
+---
+
+# Database Tables
+
+## employees_employee
+Stores current employees.
+
+## employees_deletedemployee
+Stores deleted employee records for history tracking.
+
+---
+
+# Installation
+
+## Backend Setup
+
+```bash
+cd employeelog-django
+
+pip install -r requirements.txt
+
+python3 manage.py makemigrations
+
+python3 manage.py migrate
+
+python3 manage.py runserver
