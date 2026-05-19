@@ -29,7 +29,7 @@
 import EmployeeForm from './components/EmployeeForm.vue'
 import EmployeeTable from './components/EmployeeTable.vue'
 
-const API_URL = 'https://employee-management-api.onrender.com/api/employees/'
+const API_URL = 'https://employee-management-api-ldzb.onrender.com/api/employees/'
 
 export default {
 
