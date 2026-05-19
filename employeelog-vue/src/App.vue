@@ -29,6 +29,8 @@
 import EmployeeForm from './components/EmployeeForm.vue'
 import EmployeeTable from './components/EmployeeTable.vue'
 
+const API_URL = 'https://employee-management-api.onrender.com/api/employees/'
+
 export default {
 
   name: 'App',
@@ -49,7 +51,7 @@ export default {
     async addEmployee(employee) {
 
       const response = await fetch(
-        'http://127.0.0.1:8000/api/employees/',
+        API_URL,
         {
           method: 'POST',
           body: JSON.stringify(employee),
@@ -67,7 +69,7 @@ export default {
     async deleteEmployee(id) {
 
       await fetch(
-        'http://127.0.0.1:8000/api/employees/' + id + '/',
+        API_URL + id + '/',
         {
           method: 'DELETE'
         }
@@ -82,7 +84,7 @@ export default {
     async editEmployee(id, updatedEmployee) {
 
       const response = await fetch(
-        'http://127.0.0.1:8000/api/employees/' + id + '/',
+        API_URL + id + '/',
         {
           method: 'PUT',
           body: JSON.stringify(updatedEmployee),
@@ -102,9 +104,7 @@ export default {
 
     async getEmployees() {
 
-      const response = await fetch(
-        'http://127.0.0.1:8000/api/employees/'
-      )
+      const response = await fetch(API_URL)
 
       const data = await response.json()
 
