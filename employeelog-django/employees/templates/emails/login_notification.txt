@@ -1,0 +1,14 @@
+Security Alert: New Login
+
+Hello,
+
+This is a quick security notification that a new login has occurred on your Employee Management System account.
+
+Account Email: {{ email }}
+Time: {{ timestamp }}
+Device/Browser: {{ user_agent }}
+
+If this was you, you can safely ignore this email. If you do not recognize this activity, please reset your password immediately and contact your company admin.
+
+---
+This is a security alert from your Employee Management System.

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { background-color: #ffffff; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; border-top: 5px solid #d97706; }
+        .header { margin-bottom: 20px; }
+        .header h2 { color: #d97706; margin: 0; }
+        .content { color: #555555; line-height: 1.6; }
+        .details-box { background-color: #fffbeb; padding: 15px; border-radius: 6px; margin: 20px 0; border: 1px solid #fef3c7; }
+        .details-box p { margin: 5px 0; font-size: 15px; }
+        .footer { margin-top: 30px; font-size: 12px; color: #999999; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Suspicious Login Attempt Detected</h2>
+        </div>
+        <div class="content">
+            <p>Hello Admin,</p>
+            <p>We detected an anomalous login attempt on your corporate account using a device or client that we did not recognize. Please check the login parameters below:</p>
+            
+            <div class="details-box">
+                <p><strong>Account Email:</strong> {{ email }}</p>
+                <p><strong>Access Device:</strong> {{ user_agent }}</p>
+                <p><strong>Attempt Timestamp:</strong> {{ timestamp }}</p>
+            </div>
+            
+            <p>If this was not you, please log in immediately using a secure device, reset your password under your profile settings, and terminate active browser sessions.</p>
+        </div>
+        <div class="footer">
+            <p>This is a critical security warning from your Employee Management System.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+Welcome to {{ company_name }} Workspace!
+
+Hello {{ employee_name }},
+
+Your corporate employee account has been created successfully in the WorkSphere HRMS portal. Here are your temporary login credentials:
+
+Corporate Domain: {{ company_name }}
+Login Email: {{ email }}
+Temporary Password: {{ password }}
+
+Please log in immediately using the link below and reset your password inside the user portal dashboard:
+
+Access HRMS Portal: {{ login_link }}
+
+---
+This is an automated credential delivery email from your company HR system.

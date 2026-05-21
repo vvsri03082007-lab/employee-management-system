@@ -1,0 +1,16 @@
+Workspace Created Successfully!
+
+Hello Admin,
+
+Your premium Multi-Tenant SaaS HRMS workspace has been fully initialized and configured. Here are your workspace credentials:
+
+Company Workspace Name: {{ company_name }}
+Admin Username (Email): {{ email }}
+Temporary Admin Password: {{ password }}
+
+Please log in immediately using the central portal and change your password in the dashboard settings to ensure complete security.
+
+We are thrilled to help you manage your teams smoothly and dynamically!
+
+---
+This is an automated notification from your Employee Management System.

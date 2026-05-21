@@ -3,6 +3,16 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load .env file into os.environ if it exists
+env_path = BASE_DIR / '.env'
+if env_path.exists():
+    with env_path.open() as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, val = line.split('=', 1)
+                os.environ[key.strip()] = val.strip().strip("'\"")
+
 # SECURITY WARNING
 SECRET_KEY = 'django-insecure-4b2dc@dsxefuakqm&93=ose-cp!26j5xb*512y-)i^z2)0lfb4'
 
@@ -31,6 +41,12 @@ INSTALLED_APPS = [
 
     'employees',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 
 # Middleware
 MIDDLEWARE = [
@@ -104,6 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTH_USER_MODEL = 'employees.CustomUser'
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
@@ -130,3 +147,22 @@ CORS_ALLOWED_ORIGINS = [
 
 # Default Primary Key
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Real SMTP Email Configuration (Ethereal Email default for dev/testing)
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.ethereal.email')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'gxig3fm3bnoa5sda@ethereal.email')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'BakT1EAwZ2WzX3dV8k')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@worksphere.com')
+EMAIL_TIMEOUT = 10 # 10 seconds socket timeout to prevent indefinite hangs
+
+# JWT Authentication Token Lifetimes
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+}

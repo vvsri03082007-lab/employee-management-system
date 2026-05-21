@@ -1,0 +1,14 @@
+Suspicious Login Attempt Detected
+
+Hello Admin,
+
+We detected an anomalous login attempt on your corporate account using a device or client that we did not recognize. Please check the login parameters below:
+
+Account Email: {{ email }}
+Access Device: {{ user_agent }}
+Attempt Timestamp: {{ timestamp }}
+
+If this was not you, please log in immediately using a secure device, reset your password under your profile settings, and terminate active browser sessions.
+
+---
+This is a critical security warning from your Employee Management System.

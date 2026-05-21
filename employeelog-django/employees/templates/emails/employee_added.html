@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { background-color: #ffffff; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; border-top: 5px solid #4f46e5; }
+        .header { margin-bottom: 20px; text-align: center; }
+        .header h2 { color: #333333; margin: 0; }
+        .content { color: #555555; line-height: 1.6; }
+        .details-box { background-color: #f9fafb; padding: 15px; border-radius: 6px; margin: 20px 0; border: 1px solid #e5e7eb; }
+        .details-box p { margin: 5px 0; font-size: 15px; }
+        .footer { margin-top: 30px; font-size: 12px; color: #999999; text-align: center; }
+        .btn-link { display: inline-block; padding: 10px 20px; background-color: #4f46e5; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Welcome to {{ company_name }} Workspace!</h2>
+        </div>
+        <div class="content">
+            <p>Hello {{ employee_name }},</p>
+            <p>Your corporate employee account has been created successfully in the **WorkSphere HRMS** portal. Here are your temporary login credentials:</p>
+            
+            <div class="details-box">
+                <p><strong>Corporate Domain:</strong> {{ company_name }}</p>
+                <p><strong>Login Email:</strong> {{ email }}</p>
+                <p><strong>Temporary Password:</strong> {{ password }}</p>
+            </div>
+            
+            <p>Please log in immediately using the link below and reset your password inside the user portal dashboard:</p>
+            
+            <div style="text-align: center;">
+                <a href="{{ login_link }}" class="btn-link" target="_blank">Access HRMS Portal</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>This is an automated credential delivery email from your company HR system.</p>
+        </div>
+    </div>
+</body>
+</html>

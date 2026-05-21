@@ -1,0 +1,15 @@
+{{ company_name }} Notification: Employee Updated
+
+Hello Admin,
+
+An employee record has been successfully updated in your workspace.
+
+Name: {{ employee_name }}
+Designation: {{ designation }}
+Department: {{ department }}
+Updated On: {{ timestamp }}
+
+You can view their updated details in your Admin Dashboard.
+
+---
+This is an automated notification from your Employee Management System.

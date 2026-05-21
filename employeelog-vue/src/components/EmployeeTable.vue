@@ -1,362 +1,218 @@
 <template>
-  <div id="employee-table">
+  <div class="table-card">
+    <div v-if="employees.length < 1" class="empty-table-container">
+      <span class="empty-icon">👥</span>
+      <p class="empty-table">No employees registered in this workspace yet.</p>
+    </div>
 
-    <h1 class="title">Employee Management System</h1>
+    <div v-else class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Salary</th>
+            <th>Phone</th>
+            
+            <!-- Dynamic Headers -->
+            <th v-for="field in dynamicFields" :key="field.id">
+              {{ field.field_name }}
+            </th>
 
-    <p
-      v-if="employees.length < 1"
-      class="empty-table"
-    >
-      No Employees Added
-    </p>
+            <th v-if="role === 'admin' || role === 'manager'">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="employee in employees" :key="employee.id">
+            <td class="font-bold">{{ employee.name }}</td>
+            <td>{{ employee.email }}</td>
+            <td>
+              <span class="dept-badge">{{ employee.department || 'N/A' }}</span>
+            </td>
+            <td>{{ employee.designation }}</td>
+            <td class="font-bold text-slate">₹{{ formatSalary(employee.salary) }}</td>
+            <td>{{ employee.phone }}</td>
 
-    <table v-else>
+            <!-- Dynamic Data Cells -->
+            <td v-for="field in dynamicFields" :key="field.id">
+              <span v-if="field.field_type === 'checkbox'" :class="getCheckboxClass(employee, field.id)">
+                {{ getCheckboxText(employee, field.id) }}
+              </span>
+              <span v-else>
+                {{ getDynamicValue(employee, field.id) }}
+              </span>
+            </td>
 
-      <thead>
-
-        <tr>
-          <th>S.No</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Designation</th>
-          <th>Salary</th>
-          <th>Phone</th>
-          <th>Actions</th>
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        <tr
-          v-for="(employee, index) in employees"
-          :key="employee.id"
-        >
-
-          <!-- SERIAL NUMBER -->
-
-          <td>
-            {{ index + 1 }}
-          </td>
-
-          <!-- NAME -->
-
-          <td v-if="editing === employee.id">
-
-            <input
-              type="text"
-              v-model="employee.name"
-            />
-
-          </td>
-
-          <td v-else>
-            {{ employee.name }}
-          </td>
-
-          <!-- EMAIL -->
-
-          <td v-if="editing === employee.id">
-
-            <input
-              type="email"
-              v-model="employee.email"
-            />
-
-          </td>
-
-          <td v-else>
-            {{ employee.email }}
-          </td>
-
-          <!-- DESIGNATION -->
-
-          <td v-if="editing === employee.id">
-
-            <input
-              type="text"
-              v-model="employee.designation"
-            />
-
-          </td>
-
-          <td v-else>
-            {{ employee.designation }}
-          </td>
-
-          <!-- SALARY -->
-
-          <td v-if="editing === employee.id">
-
-            <input
-              type="number"
-              v-model="employee.salary"
-            />
-
-          </td>
-
-          <td v-else>
-            ₹{{ employee.salary }}
-          </td>
-
-          <!-- PHONE -->
-
-          <td v-if="editing === employee.id">
-
-            <input
-              type="number"
-              v-model="employee.phone"
-            />
-
-          </td>
-
-          <td v-else>
-            {{ employee.phone }}
-          </td>
-
-          <!-- ACTIONS -->
-
-          <td v-if="editing === employee.id">
-
-            <button
-              class="save-btn"
-              @click="editEmployee(employee)"
-            >
-              Save
-            </button>
-
-            <button
-              class="cancel-btn"
-              @click="cancelEdit(employee)"
-            >
-              Cancel
-            </button>
-
-          </td>
-
-          <td v-else>
-
-            <button
-              class="edit-btn"
-              @click="editMode(employee)"
-            >
-              Edit
-            </button>
-
-            <button
-              class="delete-btn"
-              @click="confirmDelete(employee.id)"
-            >
-              Delete
-            </button>
-
-          </td>
-
-        </tr>
-
-      </tbody>
-
-    </table>
-
+            <!-- Actions -->
+            <td v-if="role === 'admin' || role === 'manager'">
+              <div class="actions-group">
+                <button class="action-btn btn-edit" @click="$emit('edit:employee', employee)">
+                  Edit
+                </button>
+                <button v-if="role === 'admin'" class="action-btn btn-delete" @click="confirmDelete(employee.id)">
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-
   name: "EmployeeTable",
-
   props: {
-    employees: Array
-  },
-
-  data() {
-
-    return {
-
-      editing: null,
-
-      cachedEmployee: null
-
+    employees: {
+      type: Array,
+      default: () => []
+    },
+    dynamicFields: {
+      type: Array,
+      default: () => []
+    },
+    role: {
+      type: String,
+      default: 'employee'
     }
-
   },
-
   methods: {
-
-    editMode(employee) {
-
-      this.editing = employee.id
-
-      this.cachedEmployee = Object.assign({}, employee)
-
+    formatSalary(val) {
+      if (!val) return '0';
+      return Number(val).toLocaleString('en-IN');
     },
-
-    editEmployee(employee) {
-
-      if (
-        employee.name === '' ||
-        employee.email === '' ||
-        employee.designation === '' ||
-        employee.salary === '' ||
-        employee.phone === ''
-      ) {
-
-        alert("Please fill all fields")
-
-        return
-
-      }
-
-      this.$emit('edit:employee', employee.id, employee)
-
-      alert("Employee Updated Successfully")
-
-      this.editing = null
-
+    getDynamicValue(employee, fieldId) {
+      if (!employee.dynamic_data) return '-';
+      const data = employee.dynamic_data.find(d => d.dynamic_field === fieldId);
+      return data ? data.value : '-';
     },
-
-    cancelEdit(employee) {
-
-      Object.assign(employee, this.cachedEmployee)
-
-      this.editing = null
-
+    getCheckboxText(employee, fieldId) {
+      const val = this.getDynamicValue(employee, fieldId);
+      if (val === 'true') return 'Yes';
+      if (val === 'false') return 'No';
+      return '-';
     },
-
+    getCheckboxClass(employee, fieldId) {
+      const val = this.getDynamicValue(employee, fieldId);
+      if (val === 'true') return 'chk-badge badge-active';
+      if (val === 'false') return 'chk-badge badge-inactive';
+      return '';
+    },
     confirmDelete(id) {
-
-      const confirmed = confirm(
-        "Are you sure you want to delete this employee?"
-      )
-
-      if (confirmed) {
-
+      if (confirm("Are you sure you want to delete and soft-archive this employee? This will revoke their corporate account login immediately.")) {
         this.$emit('delete:employee', id)
-
-        alert("Employee Deleted Successfully")
-
       }
-
     }
-
   }
-
 }
 </script>
 
 <style scoped>
-
-body {
-  background: #f3f4f6;
-  font-family: Arial, Helvetica, sans-serif;
+.table-card {
+  background: transparent;
+  border-radius: 16px;
+  overflow: hidden;
 }
 
-#employee-table {
-  margin-top: 30px;
+.font-bold {
+  font-weight: 600;
+  color: var(--text-main);
 }
 
-.title {
+.text-slate {
+  color: var(--text-muted);
+}
+
+.dept-badge {
+  background: hsla(var(--primary-hsl), 0.08);
+  color: var(--primary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid hsla(var(--primary-hsl), 0.1);
+}
+
+/* Custom Checkbox Badges */
+.chk-badge {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-active {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.badge-inactive {
+  background: rgba(244, 63, 94, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(244, 63, 94, 0.15);
+}
+
+/* Actions styling */
+.actions-group {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  background: hsla(var(--primary-hsl), 0.08);
+  color: var(--primary);
+  border: 1px solid hsla(var(--primary-hsl), 0.1);
+}
+
+.btn-edit:hover {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.btn-delete {
+  background: rgba(244, 63, 94, 0.08);
+  color: var(--danger);
+  border: 1px solid rgba(244, 63, 94, 0.1);
+}
+
+.btn-delete:hover {
+  background: var(--danger);
+  color: white;
+  box-shadow: 0 4px 12px var(--danger-glow);
+}
+
+/* Empty State */
+.empty-table-container {
+  padding: 60px 20px;
   text-align: center;
-  margin-bottom: 25px;
-  color: #4338ca;
-  font-size: 34px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 15px;
 }
 
 .empty-table {
-  text-align: center;
-  color: red;
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 20px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-thead {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: white;
-}
-
-th {
-  padding: 18px;
-  text-align: center;
+  color: var(--text-muted);
   font-size: 15px;
+  font-weight: 500;
 }
-
-td {
-  padding: 18px;
-  text-align: center;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 14px;
-}
-
-tr:hover {
-  background-color: #f9fafb;
-  transition: 0.3s;
-}
-
-input {
-  width: 90%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  outline: none;
-}
-
-input:focus {
-  border-color: #4f46e5;
-  box-shadow: 0 0 5px rgba(79, 70, 229, 0.4);
-}
-
-button {
-  border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-  margin-right: 8px;
-  transition: 0.3s;
-  font-size: 13px;
-}
-
-.edit-btn {
-  background: #2563eb;
-}
-
-.edit-btn:hover {
-  background: #1d4ed8;
-}
-
-.delete-btn {
-  background: #dc2626;
-}
-
-.delete-btn:hover {
-  background: #b91c1c;
-}
-
-.save-btn {
-  background: #16a34a;
-}
-
-.save-btn:hover {
-  background: #15803d;
-}
-
-.cancel-btn {
-  background: #6b7280;
-}
-
-.cancel-btn:hover {
-  background: #4b5563;
-}
-
 </style>

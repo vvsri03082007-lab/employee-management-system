@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { background-color: #ffffff; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; border-top: 5px solid #10b981; }
+        .header { margin-bottom: 20px; }
+        .header h2 { color: #333333; margin: 0; }
+        .content { color: #555555; line-height: 1.6; }
+        .details-box { background-color: #f9fafb; padding: 15px; border-radius: 6px; margin: 20px 0; border: 1px solid #e5e7eb; }
+        .details-box p { margin: 5px 0; font-size: 15px; }
+        .footer { margin-top: 30px; font-size: 12px; color: #999999; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Workspace Created Successfully!</h2>
+        </div>
+        <div class="content">
+            <p>Hello Admin,</p>
+            <p>Your premium Multi-Tenant SaaS HRMS workspace has been fully initialized and configured. Here are your workspace credentials:</p>
+            
+            <div class="details-box">
+                <p><strong>Company Workspace Name:</strong> {{ company_name }}</p>
+                <p><strong>Admin Username (Email):</strong> {{ email }}</p>
+                <p><strong>Temporary Admin Password:</strong> {{ password }}</p>
+            </div>
+            
+            <p>Please log in immediately using the link below and change your password in the dashboard settings to ensure complete security.</p>
+            <p>We are thrilled to help you manage your teams smoothly and dynamically!</p>
+        </div>
+        <div class="footer">
+            <p>This is an automated notification from your Employee Management System.</p>
+        </div>
+    </div>
+</body>
+</html>

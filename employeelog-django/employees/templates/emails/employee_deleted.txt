@@ -1,0 +1,14 @@
+{{ company_name }} Notification: Employee Deleted
+
+Hello Admin,
+
+An employee record has been deleted and soft-archived into your company's Deleted Log.
+
+Name: {{ employee_name }}
+Designation: {{ designation }}
+Deleted On: {{ timestamp }}
+
+You can view their archived record in the Deleted Employee Log of your Admin Dashboard.
+
+---
+This is an automated notification from your Employee Management System.
