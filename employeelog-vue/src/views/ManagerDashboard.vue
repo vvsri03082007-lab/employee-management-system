@@ -513,7 +513,7 @@ export default {
     async clearStatus() {
       this.savingStatus = true;
       try {
-        const res = await api.put('profile/', {
+        await api.put('profile/', {
           custom_status: '',
           status_emoji: ''
         });
