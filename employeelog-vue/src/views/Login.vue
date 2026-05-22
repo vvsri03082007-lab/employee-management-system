@@ -289,6 +289,7 @@ export default {
   letter-spacing: -0.5px;
   background: linear-gradient(135deg, var(--primary), #7c3aed);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
