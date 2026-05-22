@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
@@ -21,6 +21,7 @@ from .permissions import IsCompanyAdmin, IsCompanyAdminOrReadOnly, IsCompanyAdmi
 
 from .services import (
     send_verification_otp_email,
+    send_workspace_deletion_otp_email,
     send_password_reset_email,
     send_verification_email,
     send_admin_setup_email,
@@ -53,6 +54,73 @@ class CompanyView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Company.objects.filter(id=self.request.user.company_id)
+
+    @action(detail=False, methods=['post'], url_path='request-delete-otp')
+    def request_delete_otp(self, request):
+        admin_email = request.user.email
+        company = request.user.company
+        
+        if not company:
+            return Response({"error": "You do not belong to any workspace."}, status=status.HTTP_400_BAD_REQUEST)
+            
+        # Generate 6-digit OTP code
+        otp = ''.join(random.choices(string.digits, k=6))
+        
+        # Save/Update in OTPVerification
+        OTPVerification.objects.update_or_create(
+            email=admin_email,
+            purpose='delete_workspace',
+            defaults={'otp': otp, 'created_at': timezone.now()}
+        )
+        
+        # Log to console for quick local debugging
+        print(f"\n======================================================\n[WORKSPACE DELETION OTP] Generated OTP: {otp}\n[WORKSPACE DELETION OTP] Email: {admin_email}\n======================================================\n")
+        
+        # Send Email
+        try:
+            send_workspace_deletion_otp_email(admin_email, otp)
+        except Exception as e:
+            # Clean up on failure
+            OTPVerification.objects.filter(email=admin_email, purpose='delete_workspace').delete()
+            return Response({
+                "error": f"Failed to dispatch verification email. Error Details: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+        return Response({
+            "message": "A 6-digit secure deletion OTP has been dispatched to your Gmail."
+        }, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'], url_path='confirm-delete')
+    def confirm_delete(self, request):
+        admin_email = request.user.email
+        company = request.user.company
+        otp = request.data.get('otp')
+        
+        if not otp:
+            return Response({"error": "OTP verification code is required."}, status=status.HTTP_400_BAD_REQUEST)
+            
+        if not company:
+            return Response({"error": "You do not belong to any workspace."}, status=status.HTTP_400_BAD_REQUEST)
+            
+        try:
+            otp_record = OTPVerification.objects.get(
+                email=admin_email,
+                otp=otp,
+                purpose='delete_workspace'
+            )
+        except OTPVerification.DoesNotExist:
+            return Response({"error": "Invalid or expired workspace deletion code."}, status=status.HTTP_400_BAD_REQUEST)
+            
+        # Clean up OTP record
+        otp_record.delete()
+        
+        # Perform workspace cascade deletion
+        company_name = company.company_name
+        company.delete()
+        
+        return Response({
+            "message": f"Workspace '{company_name}' has been permanently and successfully deleted."
+        }, status=status.HTTP_200_OK)
 
 # ---------------- EMPLOYEE VIEW ----------------
 class EmployeeView(viewsets.ModelViewSet):

@@ -394,16 +394,80 @@
         </div>
 
         <!-- Danger Zone Card -->
-        <div class="card" style="margin-top: 30px; border: 1px solid #fee2e2; background-color: #fef2f2;">
+        <div class="card" style="margin-top: 30px; border: 1px solid #fee2e2; background-color: #fef2f2; padding: 25px; border-radius: 12px; transition: all 0.3s ease;">
           <h2 style="color: #991b1b; font-size: 18px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-            ⚠️ Danger Zone
+            ⚠️ Danger Zone (Highly Secure)
           </h2>
-          <p style="color: #b91c1c; font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
-            Permanently delete this workspace and all associated employee records, custom fields, status updates, and dynamic metadata. This action is irreversible and will log out all users instantly.
-          </p>
-          <button @click="confirmDeleteWorkspace" class="btn btn-danger" type="button" style="font-weight: 600;">
-            Delete Workspace
-          </button>
+          
+          <!-- Step 1: Initial state (Requesting Deletion) -->
+          <div v-if="deleteStep === 1">
+            <p style="color: #b91c1c; font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+              Permanently delete this workspace and all associated coworker records, custom metadata, and channels. 
+              To prevent accidental deletion, **we will send a secure 6-digit verification code to your administrator Gmail.**
+            </p>
+            <button 
+              @click="initiateDeleteWorkspace" 
+              class="btn btn-danger" 
+              type="button" 
+              :disabled="requestingDeleteOtp"
+              style="font-weight: 600; background-color: #dc2626; border-color: #dc2626; padding: 10px 20px;"
+            >
+              {{ requestingDeleteOtp ? 'Sending Deletion OTP...' : 'Request Deletion OTP' }}
+            </button>
+          </div>
+
+          <!-- Step 2: Verification state -->
+          <div v-else-if="deleteStep === 2">
+            <div style="background-color: #fee2e2; border-left: 4px solid #ef4444; padding: 12px; margin-bottom: 20px; border-radius: 4px;">
+              <p style="color: #991b1b; font-size: 13px; font-weight: 600; margin: 0;">
+                🔒 A 6-digit secure deletion verification OTP has been sent to your Gmail inbox!
+              </p>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="color: #991b1b; font-size: 13px; font-weight: 600;">Type the Workspace Name to confirm ("{{ companyName }}")</label>
+                <input 
+                  type="text" 
+                  v-model="deleteNameConfirm" 
+                  placeholder="Type workspace name exactly" 
+                  style="padding: 10px; border: 1px solid #fca5a5; border-radius: 6px; font-size: 14px; color: #7f1d1d; outline: none; background-color: white;" 
+                />
+              </div>
+              
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="color: #991b1b; font-size: 13px; font-weight: 600;">6-Digit Gmail Verification OTP</label>
+                <input 
+                  type="text" 
+                  v-model="deleteOtp" 
+                  maxlength="6" 
+                  placeholder="Enter 6-digit code" 
+                  style="padding: 10px; border: 1px solid #fca5a5; border-radius: 6px; font-size: 14px; color: #7f1d1d; letter-spacing: 2px; font-weight: bold; text-align: center; outline: none; background-color: white;" 
+                />
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <button 
+                @click="submitDeleteWorkspace" 
+                class="btn btn-danger" 
+                type="button" 
+                :disabled="deletingWorkspace"
+                style="font-weight: 600; background-color: #b91c1c; border-color: #b91c1c;"
+              >
+                {{ deletingWorkspace ? 'Permanently Deleting...' : 'Confirm Permanent Deletion' }}
+              </button>
+              
+              <button 
+                @click="resetDeleteFlow" 
+                class="btn btn-secondary" 
+                type="button" 
+                style="font-weight: 600; background-color: #e2e8f0; border-color: #cbd5e1; color: #475569;"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Administrator Avatar Card -->
@@ -617,6 +681,11 @@ export default {
       dynamicFields: [],
       employeeToEdit: null,
       savingSettings: false,
+      deleteStep: 1,
+      deleteOtp: '',
+      deleteNameConfirm: '',
+      requestingDeleteOtp: false,
+      deletingWorkspace: false,
       newField: {
         field_name: '',
         field_type: 'text',
@@ -916,23 +985,53 @@ export default {
         this.savingSettings = false;
       }
     },
-    async confirmDeleteWorkspace() {
-      const confirmation = prompt(
-        `WARNING: This will permanently delete the "${this.companyName}" workspace and all associated coworker profiles, activity logs, and chat records.\n\nPlease type your workspace name "${this.companyName}" to confirm deletion:`
-      );
-      
-      if (confirmation === this.companyName) {
-        try {
-          await api.delete(`companies/${this.settings.id}/`);
-          alert("Workspace has been permanently deleted.");
-          this.logout();
-        } catch (err) {
-          console.error(err);
-          alert("Failed to delete workspace. Please try again.");
-        }
-      } else if (confirmation !== null) {
-        alert("Workspace name verification mismatch. Deletion cancelled.");
+    async initiateDeleteWorkspace() {
+      this.requestingDeleteOtp = true;
+      try {
+        const adminEmail = localStorage.getItem('email') || '';
+        await api.post('companies/request-delete-otp/', {
+          email: adminEmail,
+          purpose: 'delete_workspace'
+        });
+        this.deleteStep = 2;
+        alert("A 6-digit secure deletion verification code has been successfully sent to your Gmail inbox!");
+      } catch (err) {
+        console.error(err);
+        alert(err.response?.data?.error || "Failed to request deletion code. Please check your network and settings.");
+      } finally {
+        this.requestingDeleteOtp = false;
       }
+    },
+    async submitDeleteWorkspace() {
+      if (this.deleteNameConfirm !== this.companyName) {
+        alert("Workspace name mismatch! Please type the exact name to confirm.");
+        return;
+      }
+      if (!this.deleteOtp || this.deleteOtp.length !== 6) {
+        alert("Please enter a valid 6-digit verification code.");
+        return;
+      }
+      
+      this.deletingWorkspace = true;
+      try {
+        await api.post('companies/confirm-delete/', {
+          otp: this.deleteOtp
+        });
+        alert("Your corporate workspace has been successfully and permanently deleted.");
+        this.logout();
+      } catch (err) {
+        console.error(err);
+        alert(err.response?.data?.error || "Invalid or expired deletion verification code.");
+      } finally {
+        this.deletingWorkspace = false;
+      }
+    },
+    resetDeleteFlow() {
+      this.deleteStep = 1;
+      this.deleteOtp = '';
+      this.deleteNameConfirm = '';
+      this.requestingDeleteOtp = false;
+      this.deletingWorkspace = false;
     },
     formatDate(dateStr) {
       if (!dateStr) return '';

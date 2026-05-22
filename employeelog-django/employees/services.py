@@ -44,6 +44,21 @@ def send_verification_otp_email(recipient_email, otp):
         recipient_email=recipient_email
     )
 
+def send_workspace_deletion_otp_email(recipient_email, otp):
+    """
+    SaaS Security: Sends a 6-digit critical verification code to confirm workspace deletion.
+    """
+    context = {
+        'code': otp,
+        'timestamp': timezone.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+    _send_company_email(
+        subject="CRITICAL: Workspace Deletion Verification Code - WorkSphere HRMS",
+        template_name='verification',
+        context=context,
+        recipient_email=recipient_email
+    )
+
 def send_password_reset_email(recipient_email, otp):
     """
     Forgot Password Flow: Sends a 6-digit recovery password reset OTP verification code.

@@ -110,6 +110,7 @@ class OTPVerification(models.Model):
         ('onboard', 'Onboarding'),
         ('login', 'Login'),
         ('reset', 'Password Reset'),
+        ('delete_workspace', 'Delete Workspace'),
     )
     email = models.EmailField(unique=True)
     otp = models.CharField(max_length=6)
