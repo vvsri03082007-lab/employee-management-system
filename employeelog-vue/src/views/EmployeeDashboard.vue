@@ -821,8 +821,8 @@ export default {
 }
 
 .directory-card {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--glass-bg);
+  border: 1px solid var(--border-light);
   border-radius: 20px;
   padding: 25px;
   text-align: center;
@@ -832,14 +832,15 @@ export default {
 .directory-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  border-color: #cbd5e1;
+  border-color: var(--primary);
+  background: var(--glass-bg);
 }
 
 .dir-avatar {
   width: 64px;
   height: 64px;
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--border-light);
+  color: var(--text-muted);
   font-size: 20px;
   font-weight: 700;
   display: flex;
@@ -852,20 +853,20 @@ export default {
 .directory-card h3 {
   font-size: 16px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-main);
   margin-bottom: 4px;
 }
 
 .dir-title {
   font-size: 13px;
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 500;
   margin-bottom: 12px;
 }
 
 .dept-badge {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--border-light);
+  color: var(--text-muted);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
