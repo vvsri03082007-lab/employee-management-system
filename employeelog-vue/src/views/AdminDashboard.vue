@@ -393,6 +393,19 @@
           </form>
         </div>
 
+        <!-- Danger Zone Card -->
+        <div class="card" style="margin-top: 30px; border: 1px solid #fee2e2; background-color: #fef2f2;">
+          <h2 style="color: #991b1b; font-size: 18px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+            ⚠️ Danger Zone
+          </h2>
+          <p style="color: #b91c1c; font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+            Permanently delete this workspace and all associated employee records, custom fields, status updates, and dynamic metadata. This action is irreversible and will log out all users instantly.
+          </p>
+          <button @click="confirmDeleteWorkspace" class="btn btn-danger" type="button" style="font-weight: 600;">
+            Delete Workspace
+          </button>
+        </div>
+
         <!-- Administrator Avatar Card -->
         <div class="card" style="margin-top: 30px;">
           <h2>Administrator Avatar & Profile Photo</h2>
@@ -901,6 +914,24 @@ export default {
         alert("Failed to save profile changes.");
       } finally {
         this.savingSettings = false;
+      }
+    },
+    async confirmDeleteWorkspace() {
+      const confirmation = prompt(
+        `WARNING: This will permanently delete the "${this.companyName}" workspace and all associated coworker profiles, activity logs, and chat records.\n\nPlease type your workspace name "${this.companyName}" to confirm deletion:`
+      );
+      
+      if (confirmation === this.companyName) {
+        try {
+          await api.delete(`companies/${this.settings.id}/`);
+          alert("Workspace has been permanently deleted.");
+          this.logout();
+        } catch (err) {
+          console.error(err);
+          alert("Failed to delete workspace. Please try again.");
+        }
+      } else if (confirmation !== null) {
+        alert("Workspace name verification mismatch. Deletion cancelled.");
       }
     },
     formatDate(dateStr) {
