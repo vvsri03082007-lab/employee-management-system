@@ -222,6 +222,123 @@
             </button>
           </div>
         </div>
+
+        <!-- Manager Custom Status Card -->
+        <div class="card" style="margin-top: 30px;">
+          <h2>Custom Workspace Status</h2>
+          <p style="color: #64748b; font-size: 14px; margin-bottom: 25px;">
+            Share your current mood or status with coworkers in this tenant workspace.
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <!-- Current status display -->
+            <div v-if="customStatus || statusEmoji" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 12px 18px; border-radius: 12px; border: 1px solid #e2e8f0;">
+              <span style="font-size: 24px;">{{ statusEmoji }}</span>
+              <div>
+                <p style="font-size: 11px; color: #64748b; font-weight: 500; text-transform: uppercase;">Current Status</p>
+                <p style="font-size: 15px; font-weight: 600; color: #1e293b;">"{{ customStatus }}"</p>
+              </div>
+            </div>
+
+            <!-- Custom status inputs -->
+            <div class="form-grid" style="grid-template-columns: 80px 1fr; gap: 15px; align-items: flex-end; margin-top: 0;">
+              <div class="form-group" style="margin-top: 0;">
+                <label>Emoji</label>
+                <select v-model="statusEmojiInput" class="input" style="margin-bottom: 0; text-align: center; font-size: 18px;">
+                  <option value="">None</option>
+                  <option value="💻">💻</option>
+                  <option value="🥪">🥪</option>
+                  <option value="🗓️">🗓️</option>
+                  <option value="🏠">🏠</option>
+                  <option value="☕">☕</option>
+                  <option value="🚀">🚀</option>
+                  <option value="🤒">🤒</option>
+                  <option value="🎉">🎉</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-top: 0;">
+                <label>Status message</label>
+                <input 
+                  type="text" 
+                  v-model="customStatusInput" 
+                  placeholder="What's your current status?" 
+                  class="input"
+                  style="margin-bottom: 0;"
+                />
+              </div>
+            </div>
+
+            <!-- Presets -->
+            <div>
+              <p style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Quick Presets</p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button 
+                  type="button"
+                  class="btn btn-secondary btn-sm" 
+                  style="font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px;"
+                  @click="applyPreset('💻', 'Focused')"
+                >
+                  💻 Focused
+                </button>
+                <button 
+                  type="button"
+                  class="btn btn-secondary btn-sm" 
+                  style="font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px;"
+                  @click="applyPreset('🥪', 'Out for Lunch')"
+                >
+                  🥪 Out for Lunch
+                </button>
+                <button 
+                  type="button"
+                  class="btn btn-secondary btn-sm" 
+                  style="font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px;"
+                  @click="applyPreset('🗓️', 'In a Meeting')"
+                >
+                  🗓️ In a Meeting
+                </button>
+                <button 
+                  type="button"
+                  class="btn btn-secondary btn-sm" 
+                  style="font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px;"
+                  @click="applyPreset('🏠', 'Working Remotely')"
+                >
+                  🏠 Working Remotely
+                </button>
+                <button 
+                  type="button"
+                  class="btn btn-secondary btn-sm" 
+                  style="font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px;"
+                  @click="applyPreset('☕', 'Coffee Break')"
+                >
+                  ☕ Coffee Break
+                </button>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 10px;">
+              <button 
+                type="button"
+                @click="updateStatus" 
+                class="btn btn-primary"
+                :disabled="savingStatus"
+                style="height: 40px; padding: 0 20px; font-weight: 600;"
+              >
+                {{ savingStatus ? 'Saving...' : '🚀 Save Status' }}
+              </button>
+              <button 
+                v-if="customStatus || statusEmoji"
+                type="button"
+                @click="clearStatus" 
+                class="btn btn-danger"
+                :disabled="savingStatus"
+                style="height: 40px; padding: 0 20px; font-weight: 600;"
+              >
+                Clear Status
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -255,7 +372,12 @@ export default {
       profilePicture: '',
       profilePictureInput: '',
       savingProfilePicture: false,
-      uploadFileName: ''
+      uploadFileName: '',
+      customStatus: '',
+      customStatusInput: '',
+      statusEmoji: '',
+      statusEmojiInput: '',
+      savingStatus: false
     }
   },
   computed: {
@@ -330,6 +452,10 @@ export default {
         const res = await api.get('profile/')
         this.profilePicture = res.data.profile_picture
         this.profilePictureInput = res.data.profile_picture
+        this.customStatus = res.data.custom_status || ''
+        this.customStatusInput = res.data.custom_status || ''
+        this.statusEmoji = res.data.status_emoji || ''
+        this.statusEmojiInput = res.data.status_emoji || ''
       } catch (err) {
         console.warn("Could not fetch user profile details")
       }
@@ -360,6 +486,48 @@ export default {
         this.profilePictureInput = e.target.result;
       };
       reader.readAsDataURL(file);
+    },
+    applyPreset(emoji, text) {
+      this.statusEmojiInput = emoji;
+      this.customStatusInput = text;
+    },
+    async updateStatus() {
+      this.savingStatus = true;
+      try {
+        const res = await api.put('profile/', {
+          custom_status: this.customStatusInput,
+          status_emoji: this.statusEmojiInput
+        });
+        this.customStatus = res.data.custom_status || '';
+        this.statusEmoji = res.data.status_emoji || '';
+        this.customStatusInput = res.data.custom_status || '';
+        this.statusEmojiInput = res.data.status_emoji || '';
+        alert("Status updated successfully!");
+      } catch (err) {
+        console.error("Failed to update status:", err);
+        alert("Failed to update status.");
+      } finally {
+        this.savingStatus = false;
+      }
+    },
+    async clearStatus() {
+      this.savingStatus = true;
+      try {
+        const res = await api.put('profile/', {
+          custom_status: '',
+          status_emoji: ''
+        });
+        this.customStatus = '';
+        this.statusEmoji = '';
+        this.customStatusInput = '';
+        this.statusEmojiInput = '';
+        alert("Status cleared successfully!");
+      } catch (err) {
+        console.error("Failed to clear status:", err);
+        alert("Failed to clear status.");
+      } finally {
+        this.savingStatus = false;
+      }
     },
     async fetchNotifications() {
       try {

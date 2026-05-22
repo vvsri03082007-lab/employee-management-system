@@ -127,6 +127,8 @@ class EmployeeProfile(models.Model):
     profile_picture = models.TextField(blank=True, null=True)
     is_online = models.BooleanField(default=False)
     last_seen = models.DateTimeField(auto_now=True)
+    custom_status = models.CharField(max_length=100, blank=True, null=True)
+    status_emoji = models.CharField(max_length=10, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.email} Profile"

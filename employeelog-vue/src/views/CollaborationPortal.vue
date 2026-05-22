@@ -68,7 +68,12 @@
             </div>
             <div class="chat-item-details">
               <div class="chat-item-row">
-                <span class="chat-partner-name">{{ getChatPartner(conv).name }}</span>
+                <span class="chat-partner-name">
+                  {{ getChatPartner(conv).name }}
+                  <span v-if="getChatPartner(conv).status_emoji" class="partner-status-emoji" :title="getChatPartner(conv).custom_status">
+                    {{ getChatPartner(conv).status_emoji }}
+                  </span>
+                </span>
                 <span class="chat-time">{{ formatTime(conv.updated_at) }}</span>
               </div>
               <div class="chat-item-row" style="margin-top: 4px;">
@@ -111,8 +116,18 @@
               <span class="presence-indicator" :class="{ online: selectedPartner.is_online }"></span>
             </div>
             <div class="header-partner-info">
-              <h3>{{ selectedPartner.name }}</h3>
-              <p>{{ selectedPartner.designation }} &bull; <span class="dept-badge">{{ selectedPartner.department }}</span></p>
+              <h3 style="display: flex; align-items: center; gap: 6px;">
+                {{ selectedPartner.name }}
+                <span v-if="selectedPartner.status_emoji" class="header-status-emoji" :title="selectedPartner.custom_status" style="font-size: 16px;">
+                  {{ selectedPartner.status_emoji }}
+                </span>
+              </h3>
+              <p style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                {{ selectedPartner.designation }} &bull; <span class="dept-badge">{{ selectedPartner.department }}</span>
+                <span v-if="selectedPartner.custom_status" class="header-status-text" style="font-style: italic; opacity: 0.85;">
+                  &bull; "{{ selectedPartner.custom_status }}"
+                </span>
+              </p>
             </div>
             <div class="header-status">
               <span class="status-text" :class="{ online: selectedPartner.is_online }">
@@ -207,8 +222,16 @@
             </div>
             <span class="presence-indicator" :class="{ online: user.is_online }"></span>
           </div>
-          <h3>{{ user.name }}</h3>
+          <h3 style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+            {{ user.name }}
+            <span v-if="user.status_emoji" class="dir-status-emoji" :title="user.custom_status" style="font-size: 16px;">
+              {{ user.status_emoji }}
+            </span>
+          </h3>
           <p class="dir-card-title">{{ user.designation }}</p>
+          <p v-if="user.custom_status" class="dir-custom-status" style="font-size: 13px; font-style: italic; opacity: 0.85; margin: -5px 0 12px 0;">
+            "{{ user.custom_status }}"
+          </p>
           <div class="dir-card-badges">
             <span class="dept-badge">{{ user.department }}</span>
             <span class="badge" :class="'badge-' + user.role">{{ user.role }}</span>

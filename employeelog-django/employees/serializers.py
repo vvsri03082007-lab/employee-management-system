@@ -50,7 +50,7 @@ class UserSerializer(serializers.ModelSerializer):
 class EmployeeProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeProfile
-        fields = ['profile_picture', 'is_online', 'last_seen']
+        fields = ['profile_picture', 'is_online', 'last_seen', 'custom_status', 'status_emoji']
 
 
 class CoworkerSerializer(serializers.ModelSerializer):
@@ -60,10 +60,12 @@ class CoworkerSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
     is_online = serializers.SerializerMethodField()
     last_seen = serializers.SerializerMethodField()
+    custom_status = serializers.SerializerMethodField()
+    status_emoji = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'role', 'name', 'department', 'designation', 'profile_picture', 'is_online', 'last_seen']
+        fields = ['id', 'email', 'role', 'name', 'department', 'designation', 'profile_picture', 'is_online', 'last_seen', 'custom_status', 'status_emoji']
 
     def get_name(self, obj):
         emp = Employee.objects.filter(email=obj.email).first()
@@ -108,6 +110,16 @@ class CoworkerSerializer(serializers.ModelSerializer):
     def get_last_seen(self, obj):
         if hasattr(obj, 'profile'):
             return obj.profile.last_seen
+        return None
+
+    def get_custom_status(self, obj):
+        if hasattr(obj, 'profile'):
+            return obj.profile.custom_status
+        return None
+
+    def get_status_emoji(self, obj):
+        if hasattr(obj, 'profile'):
+            return obj.profile.status_emoji
         return None
 
 

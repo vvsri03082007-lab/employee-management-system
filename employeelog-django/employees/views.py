@@ -632,17 +632,34 @@ def user_profile(request):
     
     if request.method in ['PUT', 'PATCH']:
         profile_picture = request.data.get('profile_picture')
+        custom_status = request.data.get('custom_status')
+        status_emoji = request.data.get('status_emoji')
+        
+        updated = False
         if profile_picture is not None:
             profile.profile_picture = profile_picture
+            updated = True
+        if custom_status is not None:
+            profile.custom_status = custom_status
+            updated = True
+        if status_emoji is not None:
+            profile.status_emoji = status_emoji
+            updated = True
+            
+        if updated:
             profile.save()
             return Response({
-                "status": "profile picture updated successfully",
-                "profile_picture": profile.profile_picture
+                "status": "profile updated successfully",
+                "profile_picture": profile.profile_picture,
+                "custom_status": profile.custom_status,
+                "status_emoji": profile.status_emoji
             })
-        return Response({"error": "profile_picture parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "At least one profile parameter is required for update."}, status=status.HTTP_400_BAD_REQUEST)
         
     return Response({
         "email": request.user.email,
         "role": request.user.role,
-        "profile_picture": profile.profile_picture
+        "profile_picture": profile.profile_picture,
+        "custom_status": profile.custom_status,
+        "status_emoji": profile.status_emoji
     })
