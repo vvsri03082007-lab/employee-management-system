@@ -48,7 +48,7 @@
       <div class="header" style="margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 100;">
         <div>
           <span class="badge badge-employee">Employee Portal</span>
-          <h1 style="font-size: 32px; font-weight: 800; margin-top: 6px; color: #0f172a;">
+          <h1 style="font-size: 32px; font-weight: 800; margin-top: 6px; color: var(--text-main);">
             {{ companyName }} Workspace
           </h1>
         </div>
@@ -89,7 +89,7 @@
 
           <div style="text-align: right">
             <p style="font-size: 14px; color: #64748b; font-weight: 500;">Corporate Domain</p>
-            <p style="font-size: 15px; color: #1e293b; font-weight: 600;">{{ username }}@domain</p>
+            <p style="font-size: 15px; color: var(--text-main); font-weight: 600;">{{ username }}@domain</p>
           </div>
         </div>
       </div>
@@ -169,7 +169,7 @@
 
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 25px 0;" />
 
-            <h3 style="font-size: 16px; font-weight: 700; color: #1e293b;">Workspace Profile Photo</h3>
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main);">Workspace Profile Photo</h3>
             <p style="color: #64748b; font-size: 13px; margin: 5px 0 15px 0;">Upload a professional corporate photo directly from your computer to represent you in the company channels.</p>
             
             <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start; margin-top: 15px;">
@@ -205,7 +205,7 @@
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 25px 0;" />
 
             <!-- Employee Custom Status Card Section -->
-            <h3 style="font-size: 16px; font-weight: 700; color: #1e293b;">Custom Workspace Status</h3>
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main);">Custom Workspace Status</h3>
             <p style="color: #64748b; font-size: 13px; margin: 5px 0 15px 0;">
               Share your current mood or status with coworkers in this tenant workspace.
             </p>
@@ -216,7 +216,7 @@
                 <span style="font-size: 24px;">{{ statusEmoji }}</span>
                 <div>
                   <p style="font-size: 11px; color: #64748b; font-weight: 500; text-transform: uppercase;">Current Status</p>
-                  <p style="font-size: 15px; font-weight: 600; color: #1e293b;">"{{ customStatus }}"</p>
+                  <p style="font-size: 15px; font-weight: 600; color: var(--text-main);">"{{ customStatus }}"</p>
                 </div>
               </div>
 

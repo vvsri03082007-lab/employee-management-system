@@ -55,7 +55,7 @@
       <div class="header" style="margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 100;">
         <div>
           <span class="badge badge-manager">Company Manager</span>
-          <h1 style="font-size: 32px; font-weight: 800; margin-top: 6px; color: #0f172a;">
+          <h1 style="font-size: 32px; font-weight: 800; margin-top: 6px; color: var(--text-main);">
             {{ companyName }} Workspace
           </h1>
         </div>
@@ -96,7 +96,7 @@
 
           <div style="text-align: right">
             <p style="font-size: 14px; color: #64748b; font-weight: 500;">Corporate Domain</p>
-            <p style="font-size: 15px; color: #1e293b; font-weight: 600;">{{ username }}@domain</p>
+            <p style="font-size: 15px; color: var(--text-main); font-weight: 600;">{{ username }}@domain</p>
           </div>
         </div>
       </div>
@@ -194,7 +194,7 @@
               MG
             </div>
             <div>
-              <p style="font-weight: 600; color: #1e293b; font-size: 16px;">{{ username }} (Workspace Manager)</p>
+              <p style="font-weight: 600; color: var(--text-main); font-size: 16px;">{{ username }} (Workspace Manager)</p>
               <p style="color: #64748b; font-size: 13px;">Corporate Manager Account</p>
             </div>
           </div>
@@ -243,7 +243,7 @@
               <span style="font-size: 24px;">{{ statusEmoji }}</span>
               <div>
                 <p style="font-size: 11px; color: #64748b; font-weight: 500; text-transform: uppercase;">Current Status</p>
-                <p style="font-size: 15px; font-weight: 600; color: #1e293b;">"{{ customStatus }}"</p>
+                <p style="font-size: 15px; font-weight: 600; color: var(--text-main);">"{{ customStatus }}"</p>
               </div>
             </div>
 
