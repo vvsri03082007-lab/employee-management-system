@@ -31,6 +31,13 @@
       </ul>
 
       <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(226,232,240,0.6)">
+        <button 
+          class="btn btn-secondary" 
+          style="width: 100%; margin-bottom: 12px; font-size: 13px; padding: 10px 15px; border-radius: 10px;" 
+          @click="toggleTheme"
+        >
+          {{ isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode' }}
+        </button>
         <p style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">Logged in as employee</p>
         <button class="btn btn-danger" style="width: 100%" @click="logout">Sign Out</button>
       </div>
@@ -413,7 +420,8 @@ export default {
       customStatusInput: '',
       statusEmoji: '',
       statusEmojiInput: '',
-      savingStatus: false
+      savingStatus: false,
+      isDarkMode: false
     }
   },
   computed: {
@@ -431,6 +439,15 @@ export default {
     }
   },
   async mounted() {
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme === 'dark') {
+      this.isDarkMode = true
+      document.body.classList.add('dark-theme')
+    } else {
+      this.isDarkMode = false
+      document.body.classList.remove('dark-theme')
+    }
+
     await this.fetchFields()
     await this.fetchEmployees()
     this.extractMyRecord()
@@ -497,6 +514,16 @@ export default {
     logout() {
       localStorage.clear()
       this.$router.push('/login')
+    },
+    toggleTheme() {
+      this.isDarkMode = !this.isDarkMode;
+      if (this.isDarkMode) {
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark-theme');
+        localStorage.setItem('theme', 'light');
+      }
     },
     async fetchUserProfile() {
       try {

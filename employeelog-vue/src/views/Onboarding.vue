@@ -1,5 +1,16 @@
 <template>
   <div class="auth-container">
+    <!-- Floating Theme Switcher top right -->
+    <div style="position: absolute; top: 25px; right: 25px; z-index: 999;">
+      <button 
+        class="btn-theme-toggle" 
+        @click="toggleTheme"
+        style="background: var(--glass-bg); border: 1px solid var(--border-light); color: var(--text-main); padding: 8px 16px; border-radius: 9999px; font-size: 13px; font-weight: 600; cursor: pointer; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: all 0.3s ease;"
+      >
+        {{ isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode' }}
+      </button>
+    </div>
+
     <div class="auth-card card">
       <!-- Title & Branding -->
       <div class="branding">
@@ -96,10 +107,31 @@ export default {
       code: '',
       step: 1,
       loading: false,
-      companyData: null
+      companyData: null,
+      isDarkMode: false
+    }
+  },
+  mounted() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      this.isDarkMode = true;
+      document.body.classList.add('dark-theme');
+    } else {
+      this.isDarkMode = false;
+      document.body.classList.remove('dark-theme');
     }
   },
   methods: {
+    toggleTheme() {
+      this.isDarkMode = !this.isDarkMode;
+      if (this.isDarkMode) {
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark-theme');
+        localStorage.setItem('theme', 'light');
+      }
+    },
     async requestVerification() {
       if (!this.email) return
       this.loading = true
@@ -142,16 +174,17 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: radial-gradient(circle at 10% 20%, rgb(240, 243, 248) 0%, rgb(220, 228, 240) 90.1%);
+  background: var(--bg-main);
+  transition: background 0.3s ease;
 }
 
 .auth-card {
   width: 440px;
   padding: 40px;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--glass-bg);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 20px 50px rgba(79, 70, 229, 0.1);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
@@ -240,8 +273,8 @@ export default {
 }
 
 .credentials-card {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--glass-bg);
+  border: 1px solid var(--border-light);
   border-radius: 14px;
   padding: 20px;
   text-align: left;
